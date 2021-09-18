@@ -1,0 +1,36 @@
+service: serverlessLamda-api3
+frameworkVersion: '2'
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  iam:
+     role:
+      statements:
+        - Effect: 'Allow'
+          Action:
+            - 'dynamodb:*'
+          Resource:
+            -  'arn:aws:dynamodb:us-east-1:683883881884:table/*'
+ 
+
+functions:
+  OperationOne:
+    handler: src/api/index.getInfo
+    events:
+      - http:
+          path: /items
+          method: get
+  OperationTwo:
+    handler: src/api/index.addInfo
+    events:
+      - http:
+          path: /items
+          method: put
+  OperationThree:
+    handler: src/api/index.deleteInfo
+    events:
+      - http:
+          path: /items/{id}
+          method: delete
+
