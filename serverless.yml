@@ -11,26 +11,45 @@ provider:
           Action:
             - 'dynamodb:*'
           Resource:
-            -  'arn:aws:dynamodb:us-east-1:683883881884:table/*'
+            -  'arn:aws:dynamodb:us-east-1:877969058937:table/*'
  
+plugins:
+  - serverless-webpack
 
 functions:
-  OperationOne:
-    handler: src/api/index.getInfo
+  getUser:
+    handler: src/api/userApi.getUser
     events:
       - http:
           path: /items
           method: get
-  OperationTwo:
-    handler: src/api/index.addInfo
+  addUser:
+    handler: src/api/userApi.addUser
     events:
       - http:
           path: /items
           method: put
-  OperationThree:
-    handler: src/api/index.deleteInfo
+  deleteUser:
+    handler: src/api/userApi.deleteUser
     events:
       - http:
           path: /items/{id}
           method: delete
+resources:
+  Resources:
+    UsersTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: usersTable
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+          - AttributeName: status
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+          - AttributeName: status
+            KeyType: RANGE
+        BillingMode: PAY_PER_REQUEST
 
