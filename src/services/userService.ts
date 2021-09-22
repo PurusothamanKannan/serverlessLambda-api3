@@ -1,8 +1,10 @@
 import { DynamoDBClient, PutItemCommand, PutItemCommandInput } from "@aws-sdk/client-dynamodb";
 import {  ScanCommand, ScanCommandInput } from "@aws-sdk/client-dynamodb";
 import { DeleteItemCommand, DeleteItemCommandInput , UpdateItemCommand,UpdateItemCommandInput} from "@aws-sdk/client-dynamodb";
-const client = new DynamoDBClient({ region: "us-east-1" });
-const dbclient = new DynamoDBClient({ region: "us-east-1" });
+import { AWS_CONFIG } from "src/constants/aws.constants";
+import { INITIAL_STATUS,RESP_TEMPLATE } from "src/constants/common.constants";
+const client = new DynamoDBClient({ region: AWS_CONFIG.region });
+
 const  tableName= "usersTable";
 export class userService{
 
@@ -15,7 +17,7 @@ export class userService{
             Item:  {
                 "id":{S:reqBody.id} ,
                 "status": {S:reqBody.status},
-                "compliantStatus": {S:"Non-Compliant"}
+                "compliantStatus": {S:INITIAL_STATUS.initialCompliantStatus}
               }
             
         };
@@ -23,22 +25,18 @@ export class userService{
             const results = await client.send(new PutItemCommand(params));
             console.log(results);
             return {
-                statusCode:200,
+                statusCode:RESP_TEMPLATE.successRequestCode,
                 body:JSON.stringify(results),
                 "isBase64Encoded": false,
-                headers: {
-                    'Access-Control-Allow-Origin': '*',
-                }
+                headers: RESP_TEMPLATE.headers
             };
         } catch(err) {
             console.error(err);
             return {
-                statusCode:400,
+                statusCode:RESP_TEMPLATE.badRequestError,
                 body:JSON.stringify(err),
                 "isBase64Encoded": false,
-                headers: {
-                    'Access-Control-Allow-Origin': '*',
-                }
+                headers: RESP_TEMPLATE.headers
             };
         }
         
@@ -50,37 +48,34 @@ export class userService{
         
         try {
 
-            const results = await dbclient.send(new ScanCommand(params));
+            const results = await client.send(new ScanCommand(params));
             console.log(results)
             return {
-                statusCode:200,
+                statusCode:RESP_TEMPLATE.successRequestCode,
                 body:JSON.stringify(results),
                 "isBase64Encoded": false,
-                headers: {
-                    'Access-Control-Allow-Origin': '*',
-                }
+                headers:RESP_TEMPLATE.headers
+                
             };
           } catch (err) {
             console.error(err);
             return {
-                statusCode:400,
+                statusCode:RESP_TEMPLATE.badRequestError,
                 body:JSON.stringify(err),
                 "isBase64Encoded": false,
-                headers: {
-                    'Access-Control-Allow-Origin': '*',
-                }
+                headers: RESP_TEMPLATE.headers
             };
           }
     }
     
 
         static async deleteUser(reqBody:any){
-            let status="Pending";
+            
             const params:DeleteItemCommandInput ={
             TableName: tableName,
             Key: {
               "id": {S:reqBody.pathParameters.id},
-              "status":{S:status}
+              "status":{S:reqBody.body.status}
              
             
             }
@@ -89,22 +84,18 @@ export class userService{
                 const results = await client.send(new DeleteItemCommand(params));
                 console.log(results)
                 return {
-                    statusCode:200,
+                    statusCode:RESP_TEMPLATE.successRequestCode,
                     body:JSON.stringify(results),
                     "isBase64Encoded": false,
-                    headers: {
-                        'Access-Control-Allow-Origin': '*',
-                    }
+                    headers: RESP_TEMPLATE.headers
                 };
             } catch(err) {
                 console.error(err)
                 return {
-                    statusCode:400,
+                    statusCode:RESP_TEMPLATE.badRequestError,
                     body:JSON.stringify(err),
                     "isBase64Encoded": false,
-                    headers: {
-                        'Access-Control-Allow-Origin': '*',
-                    }
+                    headers: RESP_TEMPLATE.headers
                 };
             }
     
@@ -114,7 +105,7 @@ export class userService{
            console.log(reqBody)
             const params:UpdateItemCommandInput =
             {
-            TableName: 'myTable',
+            TableName: tableName,
             Key: {
                 "id": {S:reqBody.id},
                 "status":{S:reqBody.status}
@@ -131,22 +122,18 @@ export class userService{
                 const results = await client.send(new UpdateItemCommand(params));
                 console.log(results)
                 return {
-                    statusCode:200,
+                    statusCode:RESP_TEMPLATE.successRequestCode,
                     body:JSON.stringify(results),
                     "isBase64Encoded": false,
-                    headers: {
-                        'Access-Control-Allow-Origin': '*',
-                    }
+                    headers: RESP_TEMPLATE.headers
                 };
             } catch(err) {
                 console.error(err)
                 return {
-                    statusCode:400,
+                    statusCode:RESP_TEMPLATE.badRequestError,
                     body:JSON.stringify(err),
                     "isBase64Encoded": false,
-                    headers: {
-                        'Access-Control-Allow-Origin': '*',
-                    }
+                    headers: RESP_TEMPLATE.headers
                 };
             }
     
