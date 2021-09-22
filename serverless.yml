@@ -21,20 +21,26 @@ functions:
     handler: src/api/userApi.getUser
     events:
       - http:
-          path: /items
+          path: /user
           method: get
   addUser:
     handler: src/api/userApi.addUser
     events:
       - http:
-          path: /items
+          path: /user
           method: put
   deleteUser:
     handler: src/api/userApi.deleteUser
     events:
       - http:
-          path: /items/{id}
+          path: /urser/{id}
           method: delete
+  updateUser:
+    handler: src/api/userApi.updateUser
+    events:
+      - http:
+          path: /user
+          method: POST
 resources:
   Resources:
     UsersTable:

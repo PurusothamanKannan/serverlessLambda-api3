@@ -1,7 +1,6 @@
 import { DynamoDBClient, PutItemCommand, PutItemCommandInput } from "@aws-sdk/client-dynamodb";
 import {  ScanCommand, ScanCommandInput } from "@aws-sdk/client-dynamodb";
-import { DeleteItemCommand, DeleteItemCommandInput } from "@aws-sdk/client-dynamodb";
-
+import { DeleteItemCommand, DeleteItemCommandInput , UpdateItemCommand,UpdateItemCommandInput} from "@aws-sdk/client-dynamodb";
 const client = new DynamoDBClient({ region: "us-east-1" });
 const dbclient = new DynamoDBClient({ region: "us-east-1" });
 const  tableName= "usersTable";
@@ -15,7 +14,8 @@ export class userService{
             TableName: tableName,
             Item:  {
                 "id":{S:reqBody.id} ,
-                "status": {S:reqBody.status}
+                "status": {S:reqBody.status},
+                "compliantStatus": {S:"Non-Compliant"}
               }
             
         };
@@ -109,4 +109,47 @@ export class userService{
             }
     
         }
+
+        static async updateUser(reqBody:any){
+           console.log(reqBody)
+            const params:UpdateItemCommandInput =
+            {
+            TableName: 'myTable',
+            Key: {
+                "id": {S:reqBody.id},
+                "status":{S:reqBody.status}
+ 
+              },
+            UpdateExpression: 'set compliantStatus = :r',
+            ExpressionAttributeValues: {
+              ":r": { 
+                  S:reqBody.compliantStatus
+            }
+            }
+          };
+            try {
+                const results = await client.send(new UpdateItemCommand(params));
+                console.log(results)
+                return {
+                    statusCode:200,
+                    body:JSON.stringify(results),
+                    "isBase64Encoded": false,
+                    headers: {
+                        'Access-Control-Allow-Origin': '*',
+                    }
+                };
+            } catch(err) {
+                console.error(err)
+                return {
+                    statusCode:400,
+                    body:JSON.stringify(err),
+                    "isBase64Encoded": false,
+                    headers: {
+                        'Access-Control-Allow-Origin': '*',
+                    }
+                };
+            }
+    
+        }
+
 }

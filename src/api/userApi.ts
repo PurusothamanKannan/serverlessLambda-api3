@@ -42,8 +42,23 @@ class userApi {
   });
 
   }
+
+  static updateUserInfo(event:any,context:any){
+    const reqBody = event.body
+    console.log(event);
+    return new Promise(async (resolve, reject) => {
+      try {
+          const result = userService.updateUser(reqBody);
+          resolve(result);
+      } catch (error) {
+          reject(error);
+      }
+  });
+
+  }
 }
 
 export const getUser = userApi.getUserInfo;
 export const addUser= userApi.addUserInfo;
 export const deleteUser = userApi.deleteUserInfo;
+export const updateUser = userApi.updateUserInfo;
