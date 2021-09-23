@@ -1,40 +1,27 @@
-"use strict";
-import {userService} from'./../services/userService'
-class userApi {
 
-  static getUserInfo(event:any,context:any){
-    const reqBody = event.body
+import { UserService } from'./../services/userService';
+class UserApi {
+
+  static getUserInfo(event: any, context: any) {
+    const reqBody = event.body;
     console.log(event);
     return new Promise(async (resolve, reject) => {
       try {
-          const result = userService.getUser(reqBody);
+          const result = UserService.getUser(reqBody);
           resolve(result);
       } catch (error) {
-          console.log(error)
+          console.log(error);
           reject(error);
       }
   });
 
   }
-  static deleteUserInfo(event:any,context:any){
-    const reqBody = event
+  static deleteUserInfo(event: any, context: any) {
+    const reqBody = event;
     console.log(event);
     return new Promise(async (resolve, reject) => {
       try {
-          const result = userService.deleteUser(reqBody);
-          resolve(result);
-      } catch (error) {
-          reject(error);
-      }
-  });
-
-  }
-  static addUserInfo(event:any,context:any){
-    const reqBody = event.body
-    console.log(event);
-    return new Promise(async (resolve, reject) => {
-      try {
-          const result = userService.addUser(reqBody);
+          const result = UserService.deleteUser(reqBody);
           resolve(result);
       } catch (error) {
           reject(error);
@@ -42,13 +29,26 @@ class userApi {
   });
 
   }
-
-  static updateUserInfo(event:any,context:any){
-    const reqBody = event.body
+  static addUserInfo(event: any, context: any) {
+    const reqBody = event.body;
     console.log(event);
     return new Promise(async (resolve, reject) => {
       try {
-          const result = userService.updateUser(reqBody);
+          const result = UserService.addUser(reqBody);
+          resolve(result);
+      } catch (error) {
+          reject(error);
+      }
+  });
+
+  }
+
+  static updateUserInfo(event: any, context: any) {
+    const reqBody = event.body;
+    console.log(event);
+    return new Promise(async (resolve, reject) => {
+      try {
+          const result = UserService.updateUser(reqBody);
           resolve(result);
       } catch (error) {
           reject(error);
@@ -58,7 +58,7 @@ class userApi {
   }
 }
 
-export const getUser = userApi.getUserInfo;
-export const addUser= userApi.addUserInfo;
-export const deleteUser = userApi.deleteUserInfo;
-export const updateUser = userApi.updateUserInfo;
+export const getUser = UserApi.getUserInfo;
+export const addUser = UserApi.addUserInfo;
+export const deleteUser = UserApi.deleteUserInfo;
+export const updateUser = UserApi.updateUserInfo;

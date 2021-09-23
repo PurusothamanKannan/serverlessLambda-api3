@@ -4,6 +4,7 @@ frameworkVersion: '2'
 provider:
   name: aws
   runtime: nodejs12.x
+  stage: ${opt:stage, 'dev'}
   iam:
      role:
       statements:
@@ -58,4 +59,8 @@ resources:
           - AttributeName: status
             KeyType: RANGE
         BillingMode: PAY_PER_REQUEST
+envirnoment:
+  ENVIRONMENT:${opt:stage}
+  DDB_TABLE:$(opt:TABLE_NAME)
+
 
