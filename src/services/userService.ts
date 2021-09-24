@@ -2,8 +2,7 @@ import { DynamoDBClient, PutItemCommand, PutItemCommandInput } from '@aws-sdk/cl
 import {  ScanCommand, ScanCommandInput } from '@aws-sdk/client-dynamodb';
 import { DeleteItemCommand, DeleteItemCommandInput , UpdateItemCommand, UpdateItemCommandInput } from '@aws-sdk/client-dynamodb';
 import { AWS_CONFIG, DDB } from '../constants/aws.constants';
-import { INITIAL_STATUS, RESP_TEMPLATE , ERROR_MSGS } from '../constants/common.constants';
-import { CommonUtils } from '../utils/common.utils';
+import { RESP_TEMPLATE , ERROR_MSGS } from '../constants/common.constants';
 import { Logging } from '../utils/logger.utils';
 import { ExceptionError } from '../exceptions/exceptions';
 const client = new DynamoDBClient({ region: AWS_CONFIG.region });
@@ -13,28 +12,27 @@ const  tableName = DDB.tableName;
 export  class UserService {
 
     public static async addUser(req: any) {
-        Logging.logs(JSON.stringify(req), 'trace');
+        Logging.logs(req, 'trace');
        const reqBody = JSON.parse(req);
-       const formattedDate = CommonUtils.dateFormatter(new Date());
-       Logging.logs(JSON.stringify(reqBody), 'trace');
+       Logging.logs(reqBody, 'trace');
         const params: PutItemCommandInput = {
             TableName: tableName,
             Item:  {
                 'id': {S: reqBody.id} ,
-                'status': {S: INITIAL_STATUS.initialUserStatus},
-                'compliantStatus': {S: INITIAL_STATUS.initialCompliantStatus},
-                'Date': {S: formattedDate.toString()}
+                'status': {S: reqBody.status},
+                'compliantStatus': {S: reqBody.compliantStatus},
+                'Date': {S: reqBody.date}
 
         }
     };
-        Logging.logs(JSON.stringify(params), 'trace');
+        Logging.logs(params, 'trace');
         try {
             if ( !reqBody.id ) {
                 Logging.logs('invalid user id', 'error');
                 throw new ExceptionError(ERROR_MSGS.USERID_NOT_FOUND);
             }
             const results = await client.send(new PutItemCommand(params));
-            Logging.logs(JSON.stringify(results), 'Info');
+            Logging.logs(results, 'info');
             return {
                 statusCode: RESP_TEMPLATE.successRequestCode,
                 body: JSON.stringify(results),
@@ -42,7 +40,7 @@ export  class UserService {
                 headers: RESP_TEMPLATE.headers
             };
         } catch (err) {
-            Logging.logs(JSON.stringify(err), 'error');
+            Logging.logs(err, 'error');
             return {
                 statusCode: RESP_TEMPLATE.badRequestError,
                 body: JSON.stringify(err),
@@ -52,13 +50,13 @@ export  class UserService {
         }
     }
     static async getUser(reqBody: any) {
-        Logging.logs(JSON.stringify(reqBody), 'trace');
+        Logging.logs(reqBody, 'info');
         const params: ScanCommandInput = {
             TableName: tableName
         };
         try {
             const results = await client.send(new ScanCommand(params));
-            Logging.logs(JSON.stringify(results), 'Info');
+            Logging.logs(results, 'info');
             return {
                 statusCode: RESP_TEMPLATE.successRequestCode,
                 body: JSON.stringify(results),
@@ -95,7 +93,7 @@ export  class UserService {
                     throw new ExceptionError(ERROR_MSGS.INITIAL_STATUS_NOT_FOUND);
                 }
                 const results = await client.send(new DeleteItemCommand(params));
-                Logging.logs(JSON.stringify(results), 'Info');
+                Logging.logs(results, 'info');
                 return {
                     statusCode: RESP_TEMPLATE.successRequestCode,
                     body: JSON.stringify(results),
@@ -103,7 +101,7 @@ export  class UserService {
                     headers: RESP_TEMPLATE.headers
                 };
             } catch (err) {
-                Logging.logs(JSON.stringify(err), 'error');
+                Logging.logs(err, 'error');
                 return {
                     statusCode: RESP_TEMPLATE.badRequestError,
                     body: JSON.stringify(err),
@@ -138,7 +136,7 @@ export  class UserService {
                     throw new ExceptionError(ERROR_MSGS.INITIAL_STATUS_NOT_FOUND);
                 }
                 const results = await client.send(new UpdateItemCommand(params));
-                Logging.logs(JSON.stringify(results), 'Info');
+                Logging.logs(results, 'info');
                 return {
                     statusCode: RESP_TEMPLATE.successRequestCode,
                     body: JSON.stringify(results),
@@ -146,7 +144,7 @@ export  class UserService {
                     headers: RESP_TEMPLATE.headers
                 };
             } catch (err) {
-                Logging.logs(JSON.stringify(err), 'error');
+                Logging.logs(err, 'error');
                 return {
                     statusCode: RESP_TEMPLATE.badRequestError,
                     body: JSON.stringify(err),

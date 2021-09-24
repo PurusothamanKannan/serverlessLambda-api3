@@ -4,15 +4,16 @@ export class Logging {
 
 
 
-    static  logs(message: string, type: string) {
+    static  logs(message: any , type: string) {
         if (type == 'info') {
-            log.info(message);
+
+            log.info(JSON.stringify(message));
         }
         else if (type == 'error') {
-            log.error(message);
+            log.error(JSON.stringify(message));
  }
         else {
-            log.trace(message);
+            log.trace(JSON.stringify(message));
  }
         }
 }

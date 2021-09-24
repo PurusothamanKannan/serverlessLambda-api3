@@ -1,10 +1,10 @@
 
 import { UserService } from'./../services/userService';
+import { CommonUtils } from '..//utils/common.utils';
 class UserApi {
 
-  static getUserInfo(event: any, context: any) {
+  static  getUserInfo(event: any, context: any) {
     const reqBody = event.body;
-    console.log(event);
     return new Promise(async (resolve, reject) => {
       try {
           const result = UserService.getUser(reqBody);
@@ -29,8 +29,9 @@ class UserApi {
   });
 
   }
-  static addUserInfo(event: any, context: any) {
-    const reqBody = event.body;
+  static async addUserInfo(event: any, context: any) {
+
+    const reqBody = await CommonUtils.validateUser(event.body);
     console.log(event);
     return new Promise(async (resolve, reject) => {
       try {
