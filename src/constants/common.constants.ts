@@ -1,17 +1,17 @@
 export const INITIAL_STATUS =  {
 
-    initialCompliantStatus : '    Non-Compliant',
-    initialUserStatus: 'pending',
-    NA_Status: 'NA',
-    userId_template: 'USER_'
+    INITIAL_COMPLAINT_STATS : 'Non-Compliant',
+    INITIAL_USER_STATUS: 'pending',
+    NA_STATUS: 'NA',
+    USERID_TEMPLATE: 'USER_'
 
 };
 export const RESP_TEMPLATE = {
-    headers: {
+    HEADERS: {
         'Access-Control-Allow-Origin': '*',
     },
-    badRequestError: 400,
-    successRequestCode: 200
+    BAD_REQUEST_ERROR: 400,
+    SUCCESS_RESPONSE_CODE: 200
 };
 
 export const ERROR_MSGS = {

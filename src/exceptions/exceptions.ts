@@ -20,7 +20,7 @@ export class BusinessExceptionError extends Error {
     constructor(err: string) {
         const error: IErrorModel = {
             message: err,
-            code: 500,
+            code: 404,
             errorType: 'Business Exception'
         };
         Logging.logs(err, 'error' );

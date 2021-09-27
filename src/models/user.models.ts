@@ -3,14 +3,14 @@ export class UsersModel {
     id: string;
     status: string;
     date: string;
-    complainStatus: string;
+    compliantStatus: string;
     userName: string;
 
-    constructor (id: string, status: string, date: string, complainStatus: string, userName: string ) {
-       this.id = id;
-       this.status = status;
-       this.userName = userName;
-       this.date = date;
-       this.complainStatus = complainStatus;
+    constructor (data: any ) {
+       this.id = data.id;
+       this.status = data.status;
+       this.userName = data.userName;
+       this.date = data.date;
+       this.compliantStatus = data.compliantStatus;
     }
 }

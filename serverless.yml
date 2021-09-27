@@ -29,7 +29,7 @@ functions:
     events:
       - http:
           path: /user
-          method: put
+          method: POST
   deleteUser:
     handler: src/api/userApi.deleteUser
     events:
@@ -40,8 +40,8 @@ functions:
     handler: src/api/userApi.updateUser
     events:
       - http:
-          path: /user
-          method: POST
+          path: /user/{id}
+          method: PUT
 resources:
   Resources:
     UsersTable:

@@ -5,23 +5,23 @@ import { AWS_CONFIG, DDB } from '../constants/aws.constants';
 import { RESP_TEMPLATE , ERROR_MSGS } from '../constants/common.constants';
 import { Logging } from '../utils/logger.utils';
 import { ExceptionError } from '../exceptions/exceptions';
+import { UsersModel } from 'src/models/user.models';
 const client = new DynamoDBClient({ region: AWS_CONFIG.region });
 
 const  tableName = DDB.tableName;
-
+let userData: UsersModel;
 export  class UserService {
-
-    public static async addUser(req: any) {
-        Logging.logs(req, 'trace');
-       const reqBody = JSON.parse(req);
-       Logging.logs(reqBody, 'trace');
+    public static async addUser(reqBody: UsersModel) {
+    userData = reqBody;
+      // const reqBody = JSON.parse(req);
+       Logging.logs(reqBody, 'info');
         const params: PutItemCommandInput = {
             TableName: tableName,
             Item:  {
-                'id': {S: reqBody.id} ,
-                'status': {S: reqBody.status},
-                'compliantStatus': {S: reqBody.compliantStatus},
-                'Date': {S: reqBody.date}
+                'id': {S: userData.id} ,
+                'status': {S: userData.status},
+                'compliantStatus': {S: userData.compliantStatus},
+                'Date': {S: userData.date}
 
         }
     };
@@ -29,19 +29,14 @@ export  class UserService {
             const results = await client.send(new PutItemCommand(params));
             Logging.logs(results, 'info');
             return {
-                statusCode: RESP_TEMPLATE.successRequestCode,
+                statusCode: RESP_TEMPLATE.SUCCESS_RESPONSE_CODE,
                 body: JSON.stringify(results),
                 'isBase64Encoded': false,
-                headers: RESP_TEMPLATE.headers
+                headers: RESP_TEMPLATE.HEADERS
             };
         } catch (err) {
             Logging.logs(err, 'error');
-            return {
-                statusCode: RESP_TEMPLATE.badRequestError,
-                body: JSON.stringify(err),
-                'isBase64Encoded': false,
-                headers: RESP_TEMPLATE.headers
-            };
+            throw new ExceptionError(JSON.stringify(err));
         }
     }
     static async getUser(reqBody: any) {
@@ -53,58 +48,50 @@ export  class UserService {
             const results = await client.send(new ScanCommand(params));
             Logging.logs(results, 'info');
             return {
-                statusCode: RESP_TEMPLATE.successRequestCode,
+                statusCode: RESP_TEMPLATE.SUCCESS_RESPONSE_CODE,
                 body: JSON.stringify(results),
                 'isBase64Encoded': false,
-                headers: RESP_TEMPLATE.headers
+                headers: RESP_TEMPLATE.HEADERS
             };
           } catch (err) {
             Logging.logs(JSON.stringify(err), 'error');
-            return {
-                statusCode: RESP_TEMPLATE.badRequestError,
-                body: JSON.stringify(err),
-                'isBase64Encoded': false,
-                headers: RESP_TEMPLATE.headers
-            };
+            throw new ExceptionError(JSON.stringify(err));
           }
     }
 
-    static async deleteUser(reqBody: any) {
-            Logging.logs(JSON.stringify(reqBody), 'trace');
+    static async deleteUser(reqBody: UsersModel) {
+           userData = reqBody;
+            Logging.logs(JSON.stringify(reqBody), 'info');
             const params: DeleteItemCommandInput = {
             TableName: tableName,
             Key: {
-              'id': {S: reqBody.id},
-              'status': {S: reqBody.body.status}
+              'id': {S: userData.id},
+              'status': {S: userData.status}
             }
           };
             try {
                 const results = await client.send(new DeleteItemCommand(params));
                 Logging.logs(results, 'info');
                 return {
-                    statusCode: RESP_TEMPLATE.successRequestCode,
+                    statusCode: RESP_TEMPLATE.SUCCESS_RESPONSE_CODE,
                     body: JSON.stringify(results),
                     'isBase64Encoded': false,
-                    headers: RESP_TEMPLATE.headers
+                    headers: RESP_TEMPLATE.HEADERS
                 };
             } catch (err) {
                 Logging.logs(err, 'error');
-                return {
-                    statusCode: RESP_TEMPLATE.badRequestError,
-                    body: JSON.stringify(err),
-                    'isBase64Encoded': false,
-                    headers: RESP_TEMPLATE.headers
-                };
+                throw new ExceptionError(JSON.stringify(err));
             }
         }
 
-        static async updateUser(reqBody: any) {
-           Logging.logs(JSON.stringify(reqBody), 'trace');
+        static async updateUser(reqBody: UsersModel) {
+        userData = reqBody;
+           Logging.logs(JSON.stringify(reqBody), '');
             const params: UpdateItemCommandInput = {
             TableName: tableName,
             Key: {
-                'id': {S: reqBody.id},
-                'status': { S: reqBody.status}
+                'id': {S: userData.id},
+                'status': { S: userData.status}
               },
             UpdateExpression: 'set compliantStatus = :r',
             ExpressionAttributeValues: {
@@ -117,19 +104,14 @@ export  class UserService {
                 const results = await client.send(new UpdateItemCommand(params));
                 Logging.logs(results, 'info');
                 return {
-                    statusCode: RESP_TEMPLATE.successRequestCode,
+                    statusCode: RESP_TEMPLATE.SUCCESS_RESPONSE_CODE,
                     body: JSON.stringify(results),
                     'isBase64Encoded': false,
-                    headers: RESP_TEMPLATE.headers
+                    headers: RESP_TEMPLATE.HEADERS
                 };
             } catch (err) {
                 Logging.logs(err, 'error');
-                return {
-                    statusCode: RESP_TEMPLATE.badRequestError,
-                    body: JSON.stringify(err),
-                    'isBase64Encoded': false,
-                    headers: RESP_TEMPLATE.headers
-                };
+                throw new ExceptionError(JSON.stringify(err));
             }
         }
 

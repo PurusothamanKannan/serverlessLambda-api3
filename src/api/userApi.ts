@@ -4,9 +4,10 @@ import { CommonUtils } from '..//utils/common.utils';
 class UserApi {
 
   static  getUserInfo(event: any, context: any) {
-    const reqBody = event.body;
+
     return new Promise(async (resolve, reject) => {
       try {
+          const reqBody = event.body;
           const result = UserService.getUser(reqBody);
           resolve(result);
       } catch (error) {
@@ -17,10 +18,10 @@ class UserApi {
 
   }
   static async deleteUserInfo(event: any, context: any) {
-    const reqBody = await CommonUtils.validateDeleteUser(event.body);
     console.log(event);
     return new Promise(async (resolve, reject) => {
       try {
+          const reqBody = await CommonUtils.validateDeleteUser(event.body);
           const result = UserService.deleteUser(reqBody);
           resolve(result);
       } catch (error) {
@@ -31,10 +32,10 @@ class UserApi {
   }
   static async addUserInfo(event: any, context: any) {
 
-    const reqBody = await CommonUtils.validateUser(event.body);
     console.log(event);
     return new Promise(async (resolve, reject) => {
       try {
+          const reqBody = await CommonUtils.validateUser(event.body);
           const result = UserService.addUser(reqBody);
           resolve(result);
       } catch (error) {
@@ -45,10 +46,10 @@ class UserApi {
   }
 
   static async updateUserInfo(event: any, context: any) {
-    const reqBody = await CommonUtils.validateUpdateUser(event.body);
     console.log(event);
     return new Promise(async (resolve, reject) => {
       try {
+          const reqBody = await CommonUtils.validateUpdateUser(event.body, event.pathParameters.id);
           const result = UserService.updateUser(reqBody);
           resolve(result);
       } catch (error) {
