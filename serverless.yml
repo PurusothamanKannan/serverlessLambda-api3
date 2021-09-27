@@ -34,7 +34,7 @@ functions:
     handler: src/api/userApi.deleteUser
     events:
       - http:
-          path: /urser/{id}
+          path: /urser
           method: delete
   updateUser:
     handler: src/api/userApi.updateUser

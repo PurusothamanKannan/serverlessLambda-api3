@@ -25,12 +25,7 @@ export  class UserService {
 
         }
     };
-        Logging.logs(params, 'trace');
         try {
-            if ( !reqBody.id ) {
-                Logging.logs('invalid user id', 'error');
-                throw new ExceptionError(ERROR_MSGS.USERID_NOT_FOUND);
-            }
             const results = await client.send(new PutItemCommand(params));
             Logging.logs(results, 'info');
             return {
@@ -79,19 +74,11 @@ export  class UserService {
             const params: DeleteItemCommandInput = {
             TableName: tableName,
             Key: {
-              'id': {S: reqBody.pathParameters.id},
+              'id': {S: reqBody.id},
               'status': {S: reqBody.body.status}
             }
           };
             try {
-                if ( !reqBody.id ) {
-                    Logging.logs('invalid user id', 'error');
-                    throw new ExceptionError(ERROR_MSGS.USERID_NOT_FOUND);
-                }
-                if ( !reqBody.status ) {
-                    Logging.logs('invalid user id', 'error');
-                    throw new ExceptionError(ERROR_MSGS.INITIAL_STATUS_NOT_FOUND);
-                }
                 const results = await client.send(new DeleteItemCommand(params));
                 Logging.logs(results, 'info');
                 return {
@@ -127,14 +114,6 @@ export  class UserService {
             }
           };
             try {
-                if ( !reqBody.id ) {
-                    Logging.logs('invalid user id', 'error');
-                    throw new ExceptionError(ERROR_MSGS.USERID_NOT_FOUND);
-                }
-                if ( !reqBody.status ) {
-                    Logging.logs('invalid user id', 'error');
-                    throw new ExceptionError(ERROR_MSGS.INITIAL_STATUS_NOT_FOUND);
-                }
                 const results = await client.send(new UpdateItemCommand(params));
                 Logging.logs(results, 'info');
                 return {

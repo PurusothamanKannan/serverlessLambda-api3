@@ -18,10 +18,6 @@ export class CommonUtils {
 
     }
 
-    static async dateFormatter(date: Date) {
-
-        return moment(date).format('DD-MM-YYYY[T]HH:mm:ss');
-    }
     static async validateUser(data: any) {
         const userData = new UsersModel('', '', '', '', '');
         if ( data && data.id && data.userName && data.complainStatus && data.status ) {
@@ -44,10 +40,35 @@ export class CommonUtils {
          return userData;
          }
         else {
-            Logging.logs('elseBlock', 'info' );
             throw new ExceptionError(ERROR_MSGS.INVALID_DATA );
         }
+    }
 
+    static async dateFormatter(date: Date) {
 
+        return moment(date).format('DD-MM-YYYY[T]HH:mm:ss');
+    }
+
+    static async validateUpdateUser(data: any) {
+        const userData = new UsersModel('', '', '', '', '');
+        if ( data && data.id && data.compliantStatus) {
+           userData.id = data.id;
+           userData.complainStatus = data.compliantStatus;
+           userData.status = data.status;
+        }
+        else {
+            throw new ExceptionError(ERROR_MSGS.INVALID_DATA );
+        }
+    }
+
+    static async validateDeleteUser(data: any) {
+        const userData = new UsersModel('', '', '', '', '');
+        if ( data && data.id && data.status) {
+           userData.id = data.id;
+           userData.status = data.status;
+        }
+        else {
+            throw new ExceptionError(ERROR_MSGS.INVALID_DATA );
+        }
     }
 }

@@ -16,8 +16,8 @@ class UserApi {
   });
 
   }
-  static deleteUserInfo(event: any, context: any) {
-    const reqBody = event;
+  static async deleteUserInfo(event: any, context: any) {
+    const reqBody = await CommonUtils.validateDeleteUser(event.body);
     console.log(event);
     return new Promise(async (resolve, reject) => {
       try {
@@ -44,8 +44,8 @@ class UserApi {
 
   }
 
-  static updateUserInfo(event: any, context: any) {
-    const reqBody = event.body;
+  static async updateUserInfo(event: any, context: any) {
+    const reqBody = await CommonUtils.validateUpdateUser(event.body);
     console.log(event);
     return new Promise(async (resolve, reject) => {
       try {

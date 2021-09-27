@@ -10,7 +10,21 @@ export class ExceptionError extends Error {
             errorType: 'exceptionalError'
         };
         Logging.logs(err, 'error' );
-        super( error.toString()) ;
+        super( `[${error.code}] ${error.errorType} - ${error.message}`) ;
+    }
+
+}
+
+export class BusinessExceptionError extends Error {
+
+    constructor(err: string) {
+        const error: IErrorModel = {
+            message: err,
+            code: 500,
+            errorType: 'Business Exception'
+        };
+        Logging.logs(err, 'error' );
+        super( `[${error.code}] ${error.errorType} - ${error.message}`) ;
     }
 
 }
