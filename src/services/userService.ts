@@ -21,7 +21,8 @@ export  class UserService {
                 'id': {S: userData.id} ,
                 'status': {S: userData.status},
                 'compliantStatus': {S: userData.compliantStatus},
-                'Date': {S: userData.date}
+                'date':{S: userData.date},
+                'userName': {S: userData.userName}
 
         }
     };

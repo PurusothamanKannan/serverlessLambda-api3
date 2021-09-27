@@ -21,7 +21,7 @@ class UserApi {
     console.log(event);
     return new Promise(async (resolve, reject) => {
       try {
-          const reqBody = await CommonUtils.validateDeleteUser(event.body);
+          const reqBody = await CommonUtils.validateDeleteUser(JSON.parse(event.body));
           const result = UserService.deleteUser(reqBody);
           resolve(result);
       } catch (error) {
@@ -35,10 +35,11 @@ class UserApi {
     console.log(event);
     return new Promise(async (resolve, reject) => {
       try {
-          const reqBody = await CommonUtils.validateUser(event.body);
+          const reqBody = await CommonUtils.validateUser(JSON.parse(event.body));
           const result = UserService.addUser(reqBody);
           resolve(result);
       } catch (error) {
+        console.log(error);
           reject(error);
       }
   });
@@ -49,7 +50,7 @@ class UserApi {
     console.log(event);
     return new Promise(async (resolve, reject) => {
       try {
-          const reqBody = await CommonUtils.validateUpdateUser(event.body, event.pathParameters.id);
+          const reqBody = await CommonUtils.validateUpdateUser(JSON.parse(event.body), event.pathParameters.id);
           const result = UserService.updateUser(reqBody);
           resolve(result);
       } catch (error) {

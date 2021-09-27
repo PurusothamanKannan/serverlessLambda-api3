@@ -9,7 +9,6 @@ import { Logging } from './logger.utils';
 export class CommonUtils {
 
     static async validateStatus(status: string) {
-
         if (status.toLowerCase() === INITIAL_STATUS.INITIAL_USER_STATUS) {
             return status;
         }
@@ -20,13 +19,14 @@ export class CommonUtils {
     }
 
     static async validateUser(data: any) {
-        if ( data && data.id && data.userName && data.complainStatus && data.status ) {
+        console.log(data);
+        if ( data && data.id && data.userName && data.compliantStatus && data.status ) {
               if ( typeof data.id === 'string') {
                 if ( ! (data.id.lastIndexOf(INITIAL_STATUS.USERID_TEMPLATE, 0) === 0) ) {
                     throw new BusinessExceptionError(ERROR_MSGS.USERID_NOT_VALID );
                 }
               }
-              if ( ! (data.complainStatus == INITIAL_STATUS.INITIAL_COMPLAINT_STATS) ) {
+              if ( ! (data.compliantStatus == INITIAL_STATUS.INITIAL_COMPLAINT_STATS) ) {
                 throw new BusinessExceptionError(ERROR_MSGS.COMPLIANTSTATUS_INVALID);
             }
               if ( !(data.status == INITIAL_STATUS.INITIAL_USER_STATUS) ) {
@@ -47,7 +47,7 @@ export class CommonUtils {
     }
 
     static async validateUpdateUser(data: any, id: string) {
-
+        console.log(data, id);
         if ( data && id && data.compliantStatus) {
             const userData = new UsersModel(data);
             userData.id = id;
@@ -59,11 +59,16 @@ export class CommonUtils {
     }
 
     static async validateDeleteUser(data: any) {
+        console.log(data ? data : false);
+        console.log(data.id ? data.id : false);
+        console.log(data.statua ? data.status : false);
         if ( data && data.id && data.status) {
+            console.log('IF block');
             const userData = new UsersModel(data);
             return userData;
         }
         else {
+            console.log('elseIF block');
             throw new BusinessExceptionError(ERROR_MSGS.INVALID_DATA );
         }
     }
