@@ -4,7 +4,7 @@ import { DeleteItemCommand, DeleteItemCommandInput , UpdateItemCommand, UpdateIt
 import { AWS_CONFIG, DDB } from '../constants/aws.constants';
 import { RESP_TEMPLATE , ERROR_MSGS } from '../constants/common.constants';
 import { Logging } from '../utils/logger.utils';
-import { ExceptionError } from '../exceptions/exceptions';
+import { SystemExceptionError } from '../exceptions/exceptions';
 import { UsersModel } from 'src/models/user.models';
 const client = new DynamoDBClient({ region: AWS_CONFIG.region });
 
@@ -21,7 +21,7 @@ export  class UserService {
                 'id': {S: userData.id} ,
                 'status': {S: userData.status},
                 'compliantStatus': {S: userData.compliantStatus},
-                'date':{S: userData.date},
+                'date': {S: userData.date},
                 'userName': {S: userData.userName}
 
         }
@@ -37,7 +37,7 @@ export  class UserService {
             };
         } catch (err) {
             Logging.logs(err, 'error');
-            throw new ExceptionError(JSON.stringify(err));
+            throw new SystemExceptionError(JSON.stringify(err));
         }
     }
     static async getUser(reqBody: any) {
@@ -56,7 +56,7 @@ export  class UserService {
             };
           } catch (err) {
             Logging.logs(JSON.stringify(err), 'error');
-            throw new ExceptionError(JSON.stringify(err));
+            throw new SystemExceptionError(JSON.stringify(err));
           }
     }
 
@@ -81,7 +81,7 @@ export  class UserService {
                 };
             } catch (err) {
                 Logging.logs(err, 'error');
-                throw new ExceptionError(JSON.stringify(err));
+                throw new SystemExceptionError(JSON.stringify(err));
             }
         }
 
@@ -112,7 +112,7 @@ export  class UserService {
                 };
             } catch (err) {
                 Logging.logs(err, 'error');
-                throw new ExceptionError(JSON.stringify(err));
+                throw new SystemExceptionError(JSON.stringify(err));
             }
         }
 

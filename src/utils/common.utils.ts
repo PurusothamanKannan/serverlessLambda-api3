@@ -59,16 +59,12 @@ export class CommonUtils {
     }
 
     static async validateDeleteUser(data: any) {
-        console.log(data ? data : false);
-        console.log(data.id ? data.id : false);
-        console.log(data.statua ? data.status : false);
         if ( data && data.id && data.status) {
-            console.log('IF block');
             const userData = new UsersModel(data);
             return userData;
         }
         else {
-            console.log('elseIF block');
+
             throw new BusinessExceptionError(ERROR_MSGS.INVALID_DATA );
         }
     }

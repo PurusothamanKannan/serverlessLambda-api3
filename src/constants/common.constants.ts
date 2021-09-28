@@ -22,3 +22,8 @@ export const ERROR_MSGS = {
     INITIAL_STATUS_INVALD: 'Initial user status is invalid',
     INVALID_DATA: 'one or more User data is invalid '
 };
+
+export const ERROR_CODE = {
+    BUSINESS_EXCEPTION_CODE: '404',
+    SYSTEM_EXCEPTION_CODE: '500'
+};
