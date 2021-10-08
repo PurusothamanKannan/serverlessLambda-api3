@@ -16,6 +16,20 @@ provider:
  
 plugins:
   - serverless-webpack
+  # - serverless-vpc-discovery
+
+# custom:
+#   dotenv:
+#     include: []
+#   vpcDiscovery:
+#     vpcName: "userApi-VPC-01"
+#     subnets:
+#       - tagKey: Name
+#         tagValues:
+#           - "userApi-subnet-01"
+#     securityGroups:
+#       - names:
+#           - "default"
 
 functions:
   getUser:
@@ -59,6 +73,21 @@ resources:
           - AttributeName: status
             KeyType: RANGE
         BillingMode: PAY_PER_REQUEST
+    # UserSequencetable:
+    #   Type: AWS::DynamoDB::Table
+    #   Properties:
+    #     TableName: UserSequenceTable
+    #     AttributeDefinitions:
+    #       - AttributeName: id
+    #         AttributeType: S
+    #       - AttributeName: userName
+    #         AttributeType: S
+    #       - AttributeName: sequence_number
+    #         AttributeType: N
+    #     KeySchema:
+    #       - AttributeName: id
+    #         KeyType: HASH
+    #     BillingMode: PAY_PER_REQUEST
 envirnoment:
   ENVIRONMENT:${opt:stage}
   DDB_TABLE:$(opt:TABLE_NAME)

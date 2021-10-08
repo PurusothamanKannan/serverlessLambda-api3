@@ -1,11 +1,16 @@
 
-import { INITIAL_STATUS , ERROR_MSGS }  from '../constants/common.constants';
+import { INITIAL_STATUS , ERROR_MSGS, RESP_TEMPLATE }  from '../constants/common.constants';
 import  moment from 'moment';
+import { SystemExceptionError } from '../exceptions/exceptions';
 import { UsersModel } from '../models/user.models';
 import { BusinessExceptionError } from '../exceptions/exceptions';
 import { Logging } from './logger.utils';
+import { AWS_CONFIG, DDB } from '../constants/aws.constants';
+import {  AttributeValue, DynamoDBClient, ScanCommand, ScanCommandInput } from '@aws-sdk/client-dynamodb';
+import  { marshall, unmarshall } from '@aws-sdk/util-dynamodb';
+const client = new DynamoDBClient({ region: AWS_CONFIG.region });
 
-
+const  tableName = DDB.tableName;
 export class CommonUtils {
 
     static async validateStatus(status: string) {
@@ -20,12 +25,7 @@ export class CommonUtils {
 
     static async validateUser(data: any) {
         console.log(data);
-        if ( data && data.id && data.userName && data.compliantStatus && data.status ) {
-              if ( typeof data.id === 'string') {
-                if ( ! (data.id.lastIndexOf(INITIAL_STATUS.USERID_TEMPLATE, 0) === 0) ) {
-                    throw new BusinessExceptionError(ERROR_MSGS.USERID_NOT_VALID );
-                }
-              }
+        if ( data  && data.userName && data.compliantStatus && data.status ) {
               if ( ! (data.compliantStatus == INITIAL_STATUS.INITIAL_COMPLAINT_STATS) ) {
                 throw new BusinessExceptionError(ERROR_MSGS.COMPLIANTSTATUS_INVALID);
             }
@@ -47,7 +47,6 @@ export class CommonUtils {
     }
 
     static async validateUpdateUser(data: any, id: string) {
-        console.log(data, id);
         if ( data && id && data.compliantStatus) {
             const userData = new UsersModel(data);
             userData.id = id;
@@ -59,7 +58,7 @@ export class CommonUtils {
     }
 
     static async validateDeleteUser(data: any) {
-        if ( data && data.id && data.status) {
+        if ( data && data.id) {
             const userData = new UsersModel(data);
             return userData;
         }
@@ -67,5 +66,37 @@ export class CommonUtils {
 
             throw new BusinessExceptionError(ERROR_MSGS.INVALID_DATA );
         }
+    }
+
+    static async getLastUserId() {
+
+        const params: ScanCommandInput = {
+            TableName: tableName,
+            Limit: 1,
+            ProjectionExpression: 'info.id,info.status,info.userName,info.compliantStatus'
+        };
+        try {
+            const results = await client.send(new ScanCommand(params));
+            Logging.logs(results, 'info');
+            return {
+                statusCode: RESP_TEMPLATE.SUCCESS_RESPONSE_CODE,
+                body: JSON.stringify(results),
+                'isBase64Encoded': false,
+                headers: RESP_TEMPLATE.HEADERS
+            };
+          } catch (err) {
+            Logging.logs(JSON.stringify(err), 'error');
+            throw new SystemExceptionError(JSON.stringify(err));
+          }
+
+    }
+
+    static ddbDataUnMarshall(items: any) {
+        const unmarshalledItems: any = [];
+        items.forEach((element: any) => {
+            const itemsU = unmarshall(element);
+            unmarshalledItems.push(itemsU);
+        });
+        return unmarshalledItems;
     }
 }
