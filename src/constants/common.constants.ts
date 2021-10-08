@@ -27,3 +27,4 @@ export const ERROR_CODE = {
     BUSINESS_EXCEPTION_CODE: '404',
     SYSTEM_EXCEPTION_CODE: '500'
 };
+export const LOG_TIMESTAMP_FORMAT = 'yyyy-mm-dd HH:MM:ss.l Z';

@@ -1,19 +1,14 @@
-import { Logger } from 'tslog';
-const log: Logger = new Logger();
-export class Logging {
+import { LOG_TIMESTAMP_FORMAT } from '../constants/common.constants';
+const pino = require('pino');
 
+const logger = pino({
+  level: 'trace',
+  base: null,
+  prettyPrint: {
+    translateTime: LOG_TIMESTAMP_FORMAT,
+    colorize: true,
+    levelFirst: true
+  }
+});
 
-
-    static  logs(message: any , type: string) {
-        if (type == 'info') {
-
-            log.info(JSON.stringify(message));
-        }
-        else if (type == 'error') {
-            log.error(JSON.stringify(message));
- }
-        else {
-            log.trace(JSON.stringify(message));
- }
-        }
-}
+export const Logger = logger;

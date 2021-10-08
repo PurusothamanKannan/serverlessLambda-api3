@@ -1,16 +1,11 @@
 
 import { INITIAL_STATUS , ERROR_MSGS, RESP_TEMPLATE }  from '../constants/common.constants';
 import  moment from 'moment';
-import { SystemExceptionError } from '../exceptions/exceptions';
 import { UsersModel } from '../models/user.models';
 import { BusinessExceptionError } from '../exceptions/exceptions';
-import { Logging } from './logger.utils';
-import { AWS_CONFIG, DDB } from '../constants/aws.constants';
-import {  AttributeValue, DynamoDBClient, ScanCommand, ScanCommandInput } from '@aws-sdk/client-dynamodb';
-import  { marshall, unmarshall } from '@aws-sdk/util-dynamodb';
-const client = new DynamoDBClient({ region: AWS_CONFIG.region });
+import  { unmarshall } from '@aws-sdk/util-dynamodb';
+import KSUID from 'ksuid';
 
-const  tableName = DDB.tableName;
 export class CommonUtils {
 
     static async validateStatus(status: string) {
@@ -24,7 +19,7 @@ export class CommonUtils {
     }
 
     static async validateUser(data: any) {
-        console.log(data);
+
         if ( data  && data.userName && data.compliantStatus && data.status ) {
               if ( ! (data.compliantStatus == INITIAL_STATUS.INITIAL_COMPLAINT_STATS) ) {
                 throw new BusinessExceptionError(ERROR_MSGS.COMPLIANTSTATUS_INVALID);
@@ -68,35 +63,18 @@ export class CommonUtils {
         }
     }
 
-    static async getLastUserId() {
 
-        const params: ScanCommandInput = {
-            TableName: tableName,
-            Limit: 1,
-            ProjectionExpression: 'info.id,info.status,info.userName,info.compliantStatus'
-        };
-        try {
-            const results = await client.send(new ScanCommand(params));
-            Logging.logs(results, 'info');
-            return {
-                statusCode: RESP_TEMPLATE.SUCCESS_RESPONSE_CODE,
-                body: JSON.stringify(results),
-                'isBase64Encoded': false,
-                headers: RESP_TEMPLATE.HEADERS
-            };
-          } catch (err) {
-            Logging.logs(JSON.stringify(err), 'error');
-            throw new SystemExceptionError(JSON.stringify(err));
-          }
-
-    }
-
-    static ddbDataUnMarshall(items: any) {
+    static dataUnMarshall(items: any) {
         const unmarshalledItems: any = [];
         items.forEach((element: any) => {
             const itemsU = unmarshall(element);
             unmarshalledItems.push(itemsU);
         });
         return unmarshalledItems;
+    }
+
+    static  async generateUserId() {
+        const userId = await KSUID.random();
+        return userId;
     }
 }

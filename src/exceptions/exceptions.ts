@@ -1,6 +1,5 @@
 
 import { IErrorModel } from '../models/error.models';
-import { Logging } from '../utils/logger.utils';
 import { RESP_TEMPLATE , ERROR_CODE } from '../constants/common.constants';
 
 export class BaseError extends Error {

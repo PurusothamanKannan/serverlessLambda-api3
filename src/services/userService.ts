@@ -3,11 +3,10 @@ import {  ScanCommand, ScanCommandInput } from '@aws-sdk/client-dynamodb';
 import { DeleteItemCommand, DeleteItemCommandInput , UpdateItemCommand, UpdateItemCommandInput } from '@aws-sdk/client-dynamodb';
 import { AWS_CONFIG, DDB } from '../constants/aws.constants';
 import { RESP_TEMPLATE , ERROR_MSGS, INITIAL_STATUS } from '../constants/common.constants';
-import { Logging } from '../utils/logger.utils';
+import { Logger } from '../utils/logger.utils';
 import { SystemExceptionError } from '../exceptions/exceptions';
 import { UsersModel } from '../models/user.models';
 import { CommonUtils } from '../utils/common.utils';
-import { UserIdGenerator } from '../utils/userId';
 const client = new DynamoDBClient({ region: AWS_CONFIG.region });
 
 const  tableName = DDB.tableName;
@@ -18,9 +17,8 @@ export  class UserService {
         try {
             userData = reqBody;
             // const reqBody = JSON.parse(req);
-            Logging.logs(reqBody, 'info');
-            const userId = await UserIdGenerator.generateId(userData);
-            console.log(userId);
+            const userId = await CommonUtils.generateUserId();
+            Logger.info(userData);
             const params: PutItemCommandInput = {
             TableName: tableName,
             Item:  {
@@ -33,7 +31,7 @@ export  class UserService {
                 }
             };
             const results = await client.send(new PutItemCommand(params));
-            Logging.logs(results, 'info');
+            Logger.info(results);
             return {
                 statusCode: RESP_TEMPLATE.SUCCESS_RESPONSE_CODE,
                 body: JSON.stringify(results),
@@ -41,21 +39,21 @@ export  class UserService {
                 headers: RESP_TEMPLATE.HEADERS
             };
         } catch (err: any) {
-            Logging.logs(err, 'error');
+            Logger.error(err);
             throw new SystemExceptionError(err.message);
         }
     }
     static async getUser(reqBody: any) {
-        Logging.logs(reqBody, 'info');
         try {
+            Logger.info(reqBody);
             const params: ScanCommandInput = {
                 TableName: tableName,
                 ProjectionExpression: 'id,#s,userName,compliantStatus',
                 ExpressionAttributeNames : {'#s': 'status'}
             };
             const results = await client.send(new ScanCommand(params));
-            Logging.logs(results, 'info');
-            const items = await CommonUtils.ddbDataUnMarshall(results.Items);
+            Logger.info(results);
+            const items = await CommonUtils.dataUnMarshall(results.Items);
             return {
                 statusCode: RESP_TEMPLATE.SUCCESS_RESPONSE_CODE,
                 body: JSON.stringify(items),
@@ -63,7 +61,7 @@ export  class UserService {
                 headers: RESP_TEMPLATE.HEADERS
             };
           } catch (err: any) {
-            Logging.logs(JSON.stringify(err), 'error');
+           Logger.error(err);
             throw new SystemExceptionError(err.message);
           }
     }
@@ -71,7 +69,7 @@ export  class UserService {
     static async deleteUser(reqBody: UsersModel) {
             try {
                 userData = reqBody;
-                Logging.logs(JSON.stringify(reqBody), 'info');
+                Logger.info(reqBody);
                 const params: DeleteItemCommandInput = {
                 TableName: tableName,
                 Key: {
@@ -80,7 +78,7 @@ export  class UserService {
                 }
               };
                 const results = await client.send(new DeleteItemCommand(params));
-                Logging.logs(results, 'info');
+                Logger.info(results);
                 return {
                     statusCode: RESP_TEMPLATE.SUCCESS_RESPONSE_CODE,
                     body: JSON.stringify(results),
@@ -88,7 +86,7 @@ export  class UserService {
                     headers: RESP_TEMPLATE.HEADERS
                 };
             } catch (err: any) {
-                Logging.logs(err, 'error');
+                Logger.error(err);
                 throw new SystemExceptionError(err.message);
             }
         }
@@ -97,7 +95,7 @@ export  class UserService {
 
             try {
                 userData = reqBody;
-                Logging.logs(JSON.stringify(reqBody), '');
+                 Logger.info(userData);
                  const params: UpdateItemCommandInput = {
                  TableName: tableName,
                  Key: {
@@ -112,7 +110,7 @@ export  class UserService {
                  }
                };
                 const results = await client.send(new UpdateItemCommand(params));
-                Logging.logs(results, 'info');
+                Logger.info(results);
                 return {
                     statusCode: RESP_TEMPLATE.SUCCESS_RESPONSE_CODE,
                     body: JSON.stringify(results),
@@ -120,7 +118,7 @@ export  class UserService {
                     headers: RESP_TEMPLATE.HEADERS
                 };
             } catch (err: any) {
-                Logging.logs(err, 'error');
+                Logger.error(err);
                 throw new SystemExceptionError(err.message);
             }
         }

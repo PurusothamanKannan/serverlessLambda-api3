@@ -11,7 +11,6 @@ class UserApi {
           const result = await UserService.getUser(reqBody);
           return result;
       } catch (error: any) {
-          console.log(error);
           return  {
             statusCode: error.statusCode || ERROR_CODE.SYSTEM_EXCEPTION_CODE ,
             body: error.body ? error.body : JSON.stringify(error),
@@ -44,7 +43,6 @@ class UserApi {
           const result = UserService.addUser(reqBody);
           return result;
       } catch (error: any) {
-        console.log('add user catch block', error);
          return  {
             statusCode: error.statusCode || ERROR_CODE.SYSTEM_EXCEPTION_CODE ,
             body: error.body ? error.body : JSON.stringify(error),
